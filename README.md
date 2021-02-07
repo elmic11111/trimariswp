@@ -1,2 +1,2 @@
-# TrimarisWP
+# trimariswp
 This is a plugin for The Kingdom of Trimaris Website
