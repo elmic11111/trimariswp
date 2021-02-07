@@ -100,16 +100,40 @@ class Trimariswp_Public {
 
 	}
 
+	// Process the Shortcodes
 	public function trimariswp_shortcode_processor( $atts = [], $content = null, $tag = ''  ){ 
+		// normalize attribute keys, lowercase
+		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+	
+		// override default attributes with user attributes
+		$trimariswp_atts = shortcode_atts(
+			array(
+				'page' => 'op_toc',
+			), $atts, $tag
+		);
+
+		if ($trimariswp_atts['page'] == 'op_toc') {
+			$template_output = $this->trimariswp_toc( );
+		} else {
+			$template_output = 'bob';
+		}
+
+		return $template_output;
+	}
+
+	// Table of Contents
+	public function trimariswp_toc( ){
 
 		$template_filepath = plugin_dir_path(__FILE__) . 'partials/op_toc.php';
 		if ( ! is_file( $template_filepath ) || ! is_readable( $template_filepath ) ) {
 			return '<b>TOC Template Missing</b>';
 		}
+		$template_output2 .= file_get_contents( $template_filepath );
 
-		$template_output .= file_get_contents( $template_filepath );
+		return $template_output2;
 
-		return $template_output;
 	}
+
+
 
 }

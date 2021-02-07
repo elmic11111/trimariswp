@@ -24,5 +24,3 @@
 <a style="font-size: 26px;" href="=X">X</a> | 
 <a style="font-size: 26px;" href="=Y">Y</a> | 
 <a style="font-size: 26px;" href="=Z">Z</a></center>
-
-<button id="btn-front-end-ajax">Ajax Button</button>
