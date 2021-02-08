@@ -173,7 +173,7 @@ class Trimariswp {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 		$this->loader->add_shortcode( 'trimariswp', $plugin_public, 'trimariswp_shortcode_processor' );
-
+		$this->loader->add_filter( 'query_vars', $plugin_public, 'trimariswp_register_query_vars' );
 	}
 
 	/**

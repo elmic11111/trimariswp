@@ -100,6 +100,13 @@ class Trimariswp_Public {
 
 	}
 
+	// trimariswp_query_paramaters
+	function trimariswp_register_query_vars( $vars ) {
+		$vars[] = 'linknum';
+		$vars[] = 'op_letter';
+		return $vars;
+	}
+
 	// Process the Shortcodes
 	public function trimariswp_shortcode_processor( $atts = [], $content = null, $tag = ''  ){ 
 		// normalize attribute keys, lowercase
@@ -112,28 +119,125 @@ class Trimariswp_Public {
 			), $atts, $tag
 		);
 
-		if ($trimariswp_atts['page'] == 'op_toc') {
-			$template_output = $this->trimariswp_toc( );
-		} else {
-			$template_output = 'bob';
+		switch ($trimariswp_atts['page']) {
+			case "op_alphabetical":
+				$trimariswp_output = $this->trimariswp_alphabetical( );
+				break;
+			case "op_individual":
+				$trimariswp_output = $this->trimariswp_individual( );
+				break;
+			case "op_toc":
+				$trimariswp_output = $this->trimariswp_toc( );
+				break;
+			default:
+				$trimariswp_output = '<center><b>Sorry, Something went wrong</b></center>';
 		}
 
-		return $template_output;
+		return $trimariswp_output;
 	}
 
 	// Table of Contents
-	public function trimariswp_toc( ){
+	public function trimariswp_toc( ) {
 
-		$template_filepath = plugin_dir_path(__FILE__) . 'partials/op_toc.php';
-		if ( ! is_file( $template_filepath ) || ! is_readable( $template_filepath ) ) {
-			return '<b>TOC Template Missing</b>';
+		$output = $this->trimariswp_toc_alphabet( );
+
+		return $output;
+	}
+
+	// Table of Contents
+	public function trimariswp_alphabetical( ) {
+
+		global $wp_query;
+		if (isset($wp_query->query_vars['op_letter'])) {
+			$op_letter = sanitize_html_class( $wp_query->query_vars['op_letter'] );
+		} else {
+			return "<center><b>No Letter Provided</b></center>";
 		}
-		$template_output2 .= file_get_contents( $template_filepath );
+		
+		$output = $this->trimariswp_toc_alphabet( );		
 
-		return $template_output2;
+		global $wpdb;
+		$op_masternames_results = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT scaname,linknum FROM op_masternames WHERE LEFT(scaname,1) = %s ORDER BY scaname",
+                $op_letter
+            )
+        );
+
+		if(!empty($op_masternames_results)) {
+			foreach ($op_masternames_results as $row){
+				
+				$output .= sprintf("<a href=\"/officers/office-of-the-triskele-herald/order-of-precedence/individual/?linknum=%06d\">%s</a><BR>",$row->linknum,$row->scaname);
+			}
+		}
+
+		return $output;
+	}
+
+	public function trimariswp_individual( ) {
+
+		global $wp_query;
+		if (isset($wp_query->query_vars['linknum'])) {
+			$linknum = sanitize_html_class( $wp_query->query_vars['linknum'] );
+		} else {
+			return "<center><b>No Name Provided</b></center>";
+		}
+
+		$output = $this->trimariswp_toc_alphabet( );		
+
+		global $wpdb;
+
+		$op_masternames_results = $wpdb->get_row(
+            $wpdb->prepare(
+                "select scaname,blazon from OP_MASTERNAMES where linknum = %s",
+                $linknum
+            )
+        );
+
+		if(empty($op_masternames_results)) {
+			return "<center><b>Invalid Name Provided</b></center>";
+		}
+
+		$awards_results = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT op_data.scaname, DATE_FORMAT(op_data.awarddate, '%%Y-%%d-%%m') as awarddate, op_awards.awardname, op_data.award FROM op_data AS op_data INNER JOIN op_awards AS op_awards ON op_data.award=op_awards.award
+				WHERE op_data.linknum = %s ORDER BY awarddate",
+                $linknum
+            )
+        );
+
+
+		// $query = new WP_Query( array( 'name' => 'court' ) );
+		// return $query;
+
+		$template_filepath = plugin_dir_path(__FILE__) . 'partials/op_individual.php';
+		if ( ! is_file( $template_filepath ) || ! is_readable( $template_filepath ) ) {
+			return '<b>Individual Template Missing</b>';
+		}
+
+		ob_start();
+    	include $template_filepath;
+    	$output = ob_get_clean();
+
+		return $output;
 
 	}
+
+	// Table of Contents
+	public function trimariswp_toc_alphabet( ) {
+
+		$template_filepath = plugin_dir_path(__FILE__) . 'partials/op_toc_alphabet.php';
+		if ( ! is_file( $template_filepath ) || ! is_readable( $template_filepath ) ) {
+			return '<b>TOC Alphabet Template Missing</b>';
+		}
+		$output = file_get_contents( $template_filepath );
+
+		return $output;
+	}
+
 
 
 
 }
+
+
