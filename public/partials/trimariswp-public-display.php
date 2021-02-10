@@ -11,6 +11,7 @@
  * @package    Trimariswp
  * @subpackage Trimariswp/public/partials
  */
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 ?>
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->

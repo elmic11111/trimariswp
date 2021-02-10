@@ -121,13 +121,19 @@ class Trimariswp_Public {
 
 		switch ($trimariswp_atts['page']) {
 			case "op_alphabetical":
-				$trimariswp_output = $this->trimariswp_alphabetical( );
+				$trimariswp_output = $this->trimariswp_op_alphabetical( );
 				break;
-			case "op_individual":
-				$trimariswp_output = $this->trimariswp_individual( );
+			case "op_event":
+				$trimariswp_output = $this->trimariswp_op_event( );
+				break;
+				case "op_individual":
+				$trimariswp_output = $this->trimariswp_op_individual( );
+				break;
+			case "op_recent_events":
+				$trimariswp_output = $this->trimariswp_op_recent_events( );
 				break;
 			case "op_toc":
-				$trimariswp_output = $this->trimariswp_toc( );
+				$trimariswp_output = $this->trimariswp_op_toc( );
 				break;
 			default:
 				$trimariswp_output = '<center><b>Sorry, Something went wrong</b></center>';
@@ -137,15 +143,15 @@ class Trimariswp_Public {
 	}
 
 	// Table of Contents
-	public function trimariswp_toc( ) {
+	public function trimariswp_op_toc( ) {
 
-		$output = $this->trimariswp_toc_alphabet( );
+		$output = $this->trimariswp_op_toc_alphabet( );
 
 		return $output;
 	}
 
 	// Table of Contents
-	public function trimariswp_alphabetical( ) {
+	public function trimariswp_op_alphabetical( ) {
 
 		global $wp_query;
 		if (isset($wp_query->query_vars['op_letter'])) {
@@ -154,7 +160,7 @@ class Trimariswp_Public {
 			return "<center><b>No Letter Provided</b></center>";
 		}
 		
-		$output = $this->trimariswp_toc_alphabet( );		
+		$output = $this->trimariswp_op_toc_alphabet( );		
 
 		global $wpdb;
 		$op_masternames_results = $wpdb->get_results(
@@ -174,7 +180,7 @@ class Trimariswp_Public {
 		return $output;
 	}
 
-	public function trimariswp_individual( ) {
+	public function trimariswp_op_individual( ) {
 
 		global $wp_query;
 		if (isset($wp_query->query_vars['linknum'])) {
@@ -183,7 +189,7 @@ class Trimariswp_Public {
 			return "<center><b>No Name Provided</b></center>";
 		}
 
-		$output = $this->trimariswp_toc_alphabet( );		
+		$output = $this->trimariswp_op_toc_alphabet( );		
 
 		global $wpdb;
 
@@ -200,15 +206,11 @@ class Trimariswp_Public {
 
 		$awards_results = $wpdb->get_results(
             $wpdb->prepare(
-                "SELECT op_data.scaname, DATE_FORMAT(op_data.awarddate, '%%Y-%%d-%%m') as awarddate, op_awards.awardname, op_data.award FROM op_data AS op_data INNER JOIN op_awards AS op_awards ON op_data.award=op_awards.award
+                "SELECT op_data.scaname, DATE_FORMAT(op_data.awarddate, '%%Y-%%d-%%m') as awarddate, op_awards.awardname, op_data.award, op_awards.awardimage FROM op_data AS op_data INNER JOIN op_awards AS op_awards ON op_data.award=op_awards.award
 				WHERE op_data.linknum = %s ORDER BY awarddate",
                 $linknum
             )
         );
-
-
-		// $query = new WP_Query( array( 'name' => 'court' ) );
-		// return $query;
 
 		$template_filepath = plugin_dir_path(__FILE__) . 'partials/op_individual.php';
 		if ( ! is_file( $template_filepath ) || ! is_readable( $template_filepath ) ) {
@@ -222,9 +224,34 @@ class Trimariswp_Public {
 		return $output;
 
 	}
+	// Get the Recent OP events
+	public function trimariswp_op_recent_events( ) {
+		// Maxiun Number of Events
+		$maxiumevents = 15;
+
+		global $wpdb;
+		$op_events_results = $wpdb->get_results(
+            $wpdb->prepare(
+                "select evntname, DATE_FORMAT(datebegin, '%%Y') as courtyear, evntcode FROM op_events WHERE courtheld = 1 ORDER by datebegin DESC LIMIT %d",
+                $maxiumevents
+            )
+        );
+
+		$template_filepath = plugin_dir_path(__FILE__) . 'partials/op_recent_events.php';
+		if ( ! is_file( $template_filepath ) || ! is_readable( $template_filepath ) ) {
+			return '<b>Individual Template Missing</b>';
+		}
+
+		ob_start();
+    	include $template_filepath;
+    	$output = ob_get_clean();
+
+		return $output;
+
+	}
 
 	// Table of Contents
-	public function trimariswp_toc_alphabet( ) {
+	public function trimariswp_op_toc_alphabet( ) {
 
 		$template_filepath = plugin_dir_path(__FILE__) . 'partials/op_toc_alphabet.php';
 		if ( ! is_file( $template_filepath ) || ! is_readable( $template_filepath ) ) {

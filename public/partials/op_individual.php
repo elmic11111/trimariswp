@@ -11,6 +11,7 @@
  * @package    Trimariswp
  * @subpackage Trimariswp/public/partials
  */
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 ?>
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
@@ -43,7 +44,11 @@
                 <div class='divTableCell'><?php echo $row->awarddate; ?></div>
                 <div class='divTableCell'><?php echo $row->awardname; ?></div>
                 <div class='divTableCell'><?php echo $row->award; ?></div>
-                <div class='divTableCell'>-</div>
+                <?php if (empty($row->awardimage)){ ?>
+                    <div class='divTableCell'> </div>
+                <?php } else { ?>
+                    <div class='divTableCell'><img style='width:50px;height:auto;margin:0px !important;vertical-align: -webkit-baseline-middle !important;'  src='<?php echo $row->awardimage; ?>'></div>
+                <?php } ?>                    
                 </div>
             <?php 
         }
