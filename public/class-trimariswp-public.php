@@ -104,6 +104,7 @@ class Trimariswp_Public {
 	function trimariswp_register_query_vars( $vars ) {
 		$vars[] = 'linknum';
 		$vars[] = 'op_letter';
+		$vars[] = 'op_eventid';
 		return $vars;
 	}
 
@@ -132,8 +133,8 @@ class Trimariswp_Public {
 			case "op_recent_events":
 				$trimariswp_output = $this->trimariswp_op_recent_events( );
 				break;
-			case "op_toc":
-				$trimariswp_output = $this->trimariswp_op_toc( );
+			case "op_toc_alphabet":
+				$trimariswp_output = $this->trimariswp_op_toc_alphabet( );
 				break;
 			default:
 				$trimariswp_output = '<center><b>Sorry, Something went wrong</b></center>';
@@ -142,15 +143,8 @@ class Trimariswp_Public {
 		return $trimariswp_output;
 	}
 
-	// Table of Contents
-	public function trimariswp_op_toc( ) {
 
-		$output = $this->trimariswp_op_toc_alphabet( );
-
-		return $output;
-	}
-
-	// Table of Contents
+	// Alaphetical list of People
 	public function trimariswp_op_alphabetical( ) {
 
 		global $wp_query;
@@ -180,6 +174,45 @@ class Trimariswp_Public {
 		return $output;
 	}
 
+	// Display a singel Event page of the OP
+	public function trimariswp_op_event( ) {
+		global $wp_query;
+		if (isset($wp_query->query_vars['op_eventid'])) {
+			$op_eventid = sanitize_html_class( $wp_query->query_vars['op_eventid'] );
+		} else {
+			return "<center><b>No Name Provided</b></center>";
+		}
+
+		global $wpdb;
+		$op_events_name_results = $wpdb->get_row(
+            $wpdb->prepare(
+                "select evntname, DATE_FORMAT(datebegin, '%%Y') as courtyear FROM op_events WHERE evntcode = %s",
+                $op_eventid
+            )
+        );
+
+		$op_event_results = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT op_data.scaname, DATE_FORMAT(op_data.awarddate, '%%Y-%%m-%%d') as awarddate, op_awards.awardname, op_data.award, op_awards.awardimage FROM op_data AS op_data INNER JOIN op_awards AS op_awards ON op_data.award=op_awards.award
+				WHERE op_data.evntcode = %s ORDER BY awarddate, position",
+                $op_eventid
+            )
+        );
+
+		$template_filepath = plugin_dir_path(__FILE__) . 'partials/op_event.php';
+		if ( ! is_file( $template_filepath ) || ! is_readable( $template_filepath ) ) {
+			return '<b>Individual Template Missing</b>';
+		}
+
+		ob_start();
+    	include $template_filepath;
+    	$output = ob_get_clean();
+
+		return $output;
+
+	}	
+
+	// Display the OP for an Infvidual
 	public function trimariswp_op_individual( ) {
 
 		global $wp_query;
@@ -206,7 +239,7 @@ class Trimariswp_Public {
 
 		$awards_results = $wpdb->get_results(
             $wpdb->prepare(
-                "SELECT op_data.scaname, DATE_FORMAT(op_data.awarddate, '%%Y-%%d-%%m') as awarddate, op_awards.awardname, op_data.award, op_awards.awardimage FROM op_data AS op_data INNER JOIN op_awards AS op_awards ON op_data.award=op_awards.award
+                "SELECT op_data.scaname, DATE_FORMAT(op_data.awarddate, '%%Y-%%m-%%d') as awarddate, op_awards.awardname, op_data.award, op_awards.awardimage FROM op_data AS op_data INNER JOIN op_awards AS op_awards ON op_data.award=op_awards.award
 				WHERE op_data.linknum = %s ORDER BY awarddate",
                 $linknum
             )
@@ -250,7 +283,7 @@ class Trimariswp_Public {
 
 	}
 
-	// Table of Contents
+	// Print an Alphabetic list of links to names 
 	public function trimariswp_op_toc_alphabet( ) {
 
 		$template_filepath = plugin_dir_path(__FILE__) . 'partials/op_toc_alphabet.php';
@@ -261,8 +294,6 @@ class Trimariswp_Public {
 
 		return $output;
 	}
-
-
 
 
 }

@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 <?php
     if(!empty($op_events_results)) {
         foreach ($op_events_results as $row){ ?>  
-            <a href="/officers/office-of-the-triskele-herald/order-of-precedence/event/?eventid=<?php echo $row->evntcode; ?>"><?php echo "$row->evntname $row->courtyear"; ?></a><BR>
+            <a href="/officers/office-of-the-triskele-herald/order-of-precedence/event/?op_eventid=<?php echo $row->evntcode; ?>"><?php echo "$row->evntname $row->courtyear"; ?></a><BR>
         <?php }
     } else{
         echo '<!-- No Data -->';
