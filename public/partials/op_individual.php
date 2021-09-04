@@ -28,32 +28,37 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
     <div class='center-div' style='width:100%;color: #000000; font-size: 18px;'>
     <center><strong>Awards for <?php echo $op_masternames_results->scaname ?></strong></center></br>
     </div>
+    <?php if(!empty($op_masternames_results->blazonimage)) { ?><center><img src="<?php echo $op_masternames_results->blazonimage ?>"></center><br /><?php } ?>
 
-    <center><div class='center-div' style='width:100%';>
-		<div class='divtable'>
-		<div class='divTableRow'>
-		<div class='divTableHeading '>Award Date</div>
-		<div class='divTableHeading '>Award Name</div>
-		<div class='divTableHeading '>Award</div>
-		<div class='divTableHeading '>Token</div>
-		</div>
+    <?php if(!empty($op_masternames_results->blazon)) { ?><strong>Blazon:</strong> <?php echo $op_masternames_results->blazon; ?><br /><?php } ?>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Award Date</th>
+                <th scope="col">Award Name</th>
+                <th scope="col">Award</th>
+                <th scope="col">Token</th>
+            </tr>
+        </thead>    
+        <tbody>
 <?php
     if(!empty($awards_results)) {
-        foreach ($awards_results as $row){
-            ?>  <div class='divTableRow'>
-                <div class='divTableCell'><?php echo $row->awarddate; ?></div>
-                <div class='divTableCell'><?php echo $row->awardname; ?></div>
-                <div class='divTableCell'><?php echo $row->award; ?></div>
+        foreach ($awards_results as $row){?>
+            <tr>
+                <td><?php echo $row->awarddate; ?></td>
+                <td><a href="/officers/office-of-the-triskele-herald/order-of-precedence/award/?award=<?php echo $row->award; ?>"><?php echo $row->awardname; ?></a></td>
+                <td><a href="/officers/office-of-the-triskele-herald/order-of-precedence/award/?award=<?php echo $row->award; ?>"><?php echo $row->award; ?></a></td>
                 <?php if (empty($row->awardimage)){ ?>
-                    <div class='divTableCell'> </div>
+                    <td> </td>
                 <?php } else { ?>
-                    <div class='divTableCell'><img style='width:50px;height:auto;margin:0px !important;vertical-align: -webkit-baseline-middle !important;'  src='<?php echo $row->awardimage; ?>'></div>
+                    <td><img style='width:50px;height:auto;margin:0px !important;vertical-align: -webkit-baseline-middle !important;'  src='<?php echo $row->awardimage; ?>'><td>
                 <?php } ?>                    
-                </div>
-            <?php 
-        }
+            </tr>
+        <?php } ?> 
+        <tbody>
+    <table> <?php 
     } else{
         echo '<!-- No Data -->';
     }
 ?>
-    </div></center>
+    

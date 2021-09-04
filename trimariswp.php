@@ -8,17 +8,17 @@
  * registers the activation and deactivation functions, and defines a function
  * that starts the plugin.
  *
- * @link              test2
- * @since             1.0.0
+ * @link              https://github.com/elmic11111/trimariswp
+ * @since             1.1.0
  * @package           Trimariswp
  *
  * @wordpress-plugin
  * Plugin Name:       Trimaris WP Plugin
  * Plugin URI:        test
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
- * Version:           1.0.0
+ * Description:       This is a Plug custom writen for Kingdom of SCA Trimaris
+ * Version:           1.1.0
  * Author:            David Hofmann
- * Author URI:        test2
+ * Author URI:        https://github.com/elmic11111
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       trimariswp

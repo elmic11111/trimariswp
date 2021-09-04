@@ -44,8 +44,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
             ?>  <div class='divTableRow'>
                 <div class='divTableCell'><?php echo $row->awarddate; ?></div>
                 <div class='divTableCell'><?php echo $row->scaname; ?></div>
-                <div class='divTableCell'><?php echo $row->awardname; ?></div>
-                <div class='divTableCell'><?php echo $row->award; ?></div>
+                <div class='divTableCell'><a href="/officers/office-of-the-triskele-herald/order-of-precedence/award/?award=<?php echo $row->award; ?>"><?php echo $row->awardname; ?></a></div>
+                <div class='divTableCell'><a href="/officers/office-of-the-triskele-herald/order-of-precedence/award/?award=<?php echo $row->award; ?>"><?php echo $row->award; ?></a></div>
                 <?php if (empty($row->awardimage)){ ?>
                     <div class='divTableCell'> </div>
                 <?php } else { ?>

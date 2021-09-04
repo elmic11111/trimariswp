@@ -102,9 +102,11 @@ class Trimariswp_Public {
 
 	// trimariswp_query_paramaters
 	function trimariswp_register_query_vars( $vars ) {
+		$vars[] = 'award';
+		$vars[] = 'kingdomcode';
 		$vars[] = 'linknum';
-		$vars[] = 'op_letter';
 		$vars[] = 'op_eventid';
+		$vars[] = 'op_letter';
 		return $vars;
 	}
 
@@ -136,6 +138,12 @@ class Trimariswp_Public {
 			case "op_toc_alphabet":
 				$trimariswp_output = $this->trimariswp_op_toc_alphabet( );
 				break;
+			case "op_awards_list":
+				$trimariswp_output = $this->trimariswp_op_awards_list( );
+				break;
+			case "op_award":
+				$trimariswp_output = $this->trimariswp_op_award( );
+				break;				
 			default:
 				$trimariswp_output = '<center><b>Sorry, Something went wrong</b></center>';
 		}
@@ -155,7 +163,8 @@ class Trimariswp_Public {
 		}
 		
 		$output = $this->trimariswp_op_toc_alphabet( );		
-
+		$output .= "<br /><br />";
+		
 		global $wpdb;
 		$op_masternames_results = $wpdb->get_results(
             $wpdb->prepare(
@@ -212,7 +221,7 @@ class Trimariswp_Public {
 
 	}	
 
-	// Display the OP for an Infvidual
+	// Display the OP for an Indvidual
 	public function trimariswp_op_individual( ) {
 
 		global $wp_query;
@@ -228,7 +237,7 @@ class Trimariswp_Public {
 
 		$op_masternames_results = $wpdb->get_row(
             $wpdb->prepare(
-                "select scaname,blazon from OP_MASTERNAMES where linknum = %s",
+                "select scaname,blazon,blazonimage from OP_MASTERNAMES where linknum = %s",
                 $linknum
             )
         );
@@ -294,6 +303,95 @@ class Trimariswp_Public {
 
 		return $output;
 	}
+
+	// List the In Kingdom Awards
+	public function trimariswp_op_awards_list( ) {
+		global $wp_query;
+		if (isset($wp_query->query_vars['kingdomcode'])) {
+			$kingdomcode = sanitize_html_class( $wp_query->query_vars['kingdomcode'] );
+		} else {
+			return "<center><b>No Kingdom Code Provided</b></center>";
+		}
+
+		global $wpdb;
+		// Get the Awared Level Titles
+		$op_levels_list_results = $wpdb->get_results("select awardlevel, title from op_levels");
+		if(empty($op_levels_list_results)) {
+			return '<b>No Award Level Data</b>';
+		}
+		$award_levels = array();
+		foreach ($op_levels_list_results as $row) { 
+			$award_levels[$row->awardlevel] = $row->title;
+		}
+
+		// Get the Awards
+		$op_awards_list_results = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT award, awardtype, awardname, awardlevel, awardrank, awardreason, awardimage FROM op_awards WHERE kingdomcode = %s ORDER BY awardlevel, awardrank, awardname",$kingdomcode
+            )
+        );
+
+		$template_filepath = plugin_dir_path(__FILE__) . 'partials/op_awards_list.php';
+		if ( ! is_file( $template_filepath ) || ! is_readable( $template_filepath ) ) {
+			return '<b>Individual Template Missing</b>';
+		}
+
+		ob_start();
+    	include $template_filepath;
+    	$output = ob_get_clean();
+
+		return $output;
+
+	}
+
+	// Show a specific award
+	public function trimariswp_op_award( ) {
+		global $wp_query;
+		if (isset($wp_query->query_vars['award'])) {
+			$award = sanitize_html_class( $wp_query->query_vars['award'] );
+		} else {
+			return "<center><b>No Award Code Provided</b></center>";
+		}
+
+		global $wpdb;
+		// Get the Award
+		$op_awards_results = $wpdb->get_row(
+            $wpdb->prepare(
+                "SELECT op_kingdoms.kingdom, op_awards.awardtype, op_awards.awardlevel, op_awards.awardname, op_awards.awardreason, op_awards.awardimage, DATE_FORMAT(op_awards.awardopened, '%%m/%%d/%%Y') AS readable_opened_date FROM op_awards AS op_awards INNER JOIN op_kingdoms AS op_kingdoms ON op_awards.kingdomcode=op_kingdoms.kingdomcode WHERE op_awards.award = %s LIMIT 1",$award
+            )
+        );
+
+		// Get the Award
+		$op_data_results = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT scaname, awarddate, linknum, DATE_FORMAT(awarddate, '%%m/%%d/%%Y') AS readable_date, position FROM op_data WHERE award = %s ORDER by awarddate, position",$award
+            )
+        );
+
+
+
+		// $op_data_results = $wpdb->get_results(
+        //     $wpdb->prepare(
+        //         "SELECT scaname, awarddate, awarddate AS readabledate, scaname, position FROM op_data WHERE award = %s ORDER by awarddate, position",$award
+        //     )
+        // );		
+//		"SELECT scaname, awarddate, DATE_FORMAT(awarddate, '%%m/%%d/%%Y') as readabledate, scaname FROM op_data WHERE award = %s ORDER by awarddate, position",$award
+
+		$template_filepath = plugin_dir_path(__FILE__) . 'partials/op_award.php';
+		if ( ! is_file( $template_filepath ) || ! is_readable( $template_filepath ) ) {
+			return '<b>Individual Template Missing</b>';
+		}
+
+		ob_start();
+    	include $template_filepath;
+    	$output = ob_get_clean();
+
+		return $output;
+
+	}
+
+
+
 
 
 }

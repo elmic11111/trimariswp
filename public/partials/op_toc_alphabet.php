@@ -1,4 +1,3 @@
-<center>
 <a style="font-size: 16px;" href="/officers/office-of-the-triskele-herald/order-of-precedence/alphabetical/?op_letter=A">A</a> 
 <a style="font-size: 16px;" href="/officers/office-of-the-triskele-herald/order-of-precedence/alphabetical/?op_letter=B">B</a> 
 <a style="font-size: 16px;" href="/officers/office-of-the-triskele-herald/order-of-precedence/alphabetical/?op_letter=C">C</a> 
@@ -24,4 +23,4 @@
 <a style="font-size: 16px;" href="/officers/office-of-the-triskele-herald/order-of-precedence/alphabetical/?op_letter=W">W</a> 
 <a style="font-size: 16px;" href="/officers/office-of-the-triskele-herald/order-of-precedence/alphabetical/?op_letter=X">X</a> 
 <a style="font-size: 16px;" href="/officers/office-of-the-triskele-herald/order-of-precedence/alphabetical/?op_letter=Y">Y</a> 
-<a style="font-size: 16px;" href="/officers/office-of-the-triskele-herald/order-of-precedence/alphabetical/?op_letter=Z">Z</a></center>
+<a style="font-size: 16px;" href="/officers/office-of-the-triskele-herald/order-of-precedence/alphabetical/?op_letter=Z">Z</a>
