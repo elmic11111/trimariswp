@@ -3,7 +3,7 @@
 /**
  * Register all actions and filters for the plugin
  *
- * @link       test2
+ * @link              https://github.com/elmic11111/trimariswp
  * @since      1.0.0
  *
  * @package    Trimariswp

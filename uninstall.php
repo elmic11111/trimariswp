@@ -19,7 +19,7 @@
  * For more information, see the following discussion:
  * https://github.com/tommcfarlin/WordPress-Plugin-Boilerplate/pull/123#issuecomment-28541913
  *
- * @link       test2
+ * @link              https://github.com/elmic11111/trimariswp
  * @since      1.0.0
  *
  * @package    Trimariswp

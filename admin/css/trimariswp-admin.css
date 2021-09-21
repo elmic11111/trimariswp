@@ -2,3 +2,14 @@
  * All of the CSS for your admin-specific functionality should be
  * included in this file.
  */
+
+ .card{margin-top:0;padding:0;max-width:none;box-shadow:none;background:0;box-sizing:content-box}
+ input[type=checkbox],input[type=radio]{margin: .3rem 0 0 -20px;}
+ .trimariswplist select{ -webkit-appearance:auto; background-image:none;}
+ .wp-core-ui select{-webkit-appearance:auto; background-image:none;}
+ .td-limit {
+    max-width: 70px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}

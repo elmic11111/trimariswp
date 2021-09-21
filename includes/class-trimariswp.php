@@ -6,7 +6,7 @@
  * A class definition that includes attributes and functions used across both the
  * public-facing side of the site and the admin area.
  *
- * @link       test2
+ * @link              https://github.com/elmic11111/trimariswp
  * @since      1.0.0
  *
  * @package    Trimariswp
@@ -156,6 +156,10 @@ class Trimariswp {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		// Action hook for Trimaris admin menu
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'trimariswp_admin_menu' );
+		// Action hook for ajax
+		$this->loader->add_action( 'wp_ajax_admin_ajax_request', $plugin_admin, 'handle_ajax_request_admin');
 
 	}
 
