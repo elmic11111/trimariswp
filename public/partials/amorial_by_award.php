@@ -1,0 +1,44 @@
+<?php
+
+/**
+ * Provide a public-facing view for the plugin
+ *
+ * This file is used to markup the public-facing aspects of the plugin.
+ *
+ * @link              https://github.com/elmic11111/trimariswp
+ * @since      1.0.0
+ *
+ * @package    Trimariswp
+ * @subpackage Trimariswp/public/partials
+ */
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+?>
+
+<!-- This file should primarily consist of HTML with a little bit of PHP. -->
+
+
+<?php
+if(!empty($op_data_results)) {
+?> 
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col" style="text-align:center">Award Date</th>
+                <th scope="col" style="text-align:center">Companion Name</th>
+                <th scope="col" style="text-align:center">Heraldy</th>
+            </tr>
+        </thead>    
+        <tbody>
+            <?php foreach ($op_data_results as $row) { ?>
+            <tr>
+                <td style="text-align:center"><?php echo $row->readable_date; ?></td>
+                <td style="text-align:center"><a href="/officers/office-of-the-triskele-herald/order-of-precedence/individual/?linknum=<?php echo $row->linknum; ?>"><?php echo $row->scaname; ?></a></td>
+                <td style="text-align:center"><?php if(!empty($row->blazonimage)) { ?><center><img src="<?php echo $row->blazonimage ?>"></center><?php } ?></td>
+            </tr>
+        <?php } ?> 
+        <tbody>
+    <table>
+<?php } else{
+    echo '<!-- No Data -->';
+}
+?>

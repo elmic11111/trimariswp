@@ -119,6 +119,7 @@ class Trimariswp_Public {
 		$trimariswp_atts = shortcode_atts(
 			array(
 				'page' => 'op_toc',
+				'award' => false,
 			), $atts, $tag
 		);
 
@@ -144,6 +145,9 @@ class Trimariswp_Public {
 			case "op_award":
 				$trimariswp_output = $this->trimariswp_op_award( );
 				break;				
+			case "armorial_by_award":
+				$trimariswp_output = $this->trimariswp_armorial_by_award($trimariswp_atts);
+				break;						
 			default:
 				$trimariswp_output = '<center><b>Sorry, Something went wrong</b></center>';
 		}
@@ -391,9 +395,37 @@ class Trimariswp_Public {
 	}
 
 
+	// Pull Amorial by award
+	public function trimariswp_armorial_by_award($trimariswp_atts) {
+		global $wp_query;
+		if (isset($wp_query->query_vars['award'])) {
+			$award = sanitize_html_class( $wp_query->query_vars['award'] );
+		} else if ($trimariswp_atts['award']) {
+			$award = sanitize_html_class(  $trimariswp_atts['award'] );
+		} else {
+			return "<center><b>No Award Code Provided</b></center>";
+		}
 
+		global $wpdb;
 
+		// Get the Award
+		$op_data_results = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT op_data.scaname, op_data.awarddate, op_data.linknum, op_masternames.blazonimage, DATE_FORMAT(op_data.awarddate, '%%m/%%d/%%Y') AS readable_date, position FROM op_data AS op_data INNER JOIN op_masternames AS op_masternames ON op_data.linknum=op_masternames.linknum WHERE op_data.award = %s ORDER by awarddate, position",$award
+            )
+        );
 
+		$template_filepath = plugin_dir_path(__FILE__) . 'partials/amorial_by_award.php';
+		if ( ! is_file( $template_filepath ) || ! is_readable( $template_filepath ) ) {
+			return '<b>Individual Template Missing</b>';
+		}
+
+		ob_start();
+    	include $template_filepath;
+    	$output = ob_get_clean();
+
+		return $output;
+	}
 }
 
 
